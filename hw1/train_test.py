@@ -16,7 +16,7 @@ from sklearn.linear_model import SGDClassifier
 def train_model(train_X, train_Y, valid_X, valid_Y, hyper_param1):
 
     # Choose a classifier (here, linear SVM)
-    clf = SGDClassifier(verbose=0, loss="hinge", alpha=hyper_param1, max_iter=1000, penalty="l2", random_state=0)
+    clf = SGDClassifier(verbose=0, loss="log_loss", alpha=hyper_param1, max_iter=1000, penalty="l2", random_state=0)
 
     # train
     clf.fit(train_X, train_Y)
@@ -32,8 +32,8 @@ def train_model(train_X, train_Y, valid_X, valid_Y, hyper_param1):
 if __name__ == '__main__':
 
     # load data 
-    train_X = mean_mfcc('train')
-    valid_X = mean_mfcc('valid')
+    train_X = mean_features('train')
+    valid_X = mean_features('valid')
 
     # label generation
     cls = np.array([1,2,3,4,5,6,7,8,9,10])
