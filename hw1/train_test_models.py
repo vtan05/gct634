@@ -16,13 +16,8 @@ from sklearn import model_selection
 from sklearn.linear_model import SGDClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.cluster import KMeans
-from sklearn.mixture import GaussianMixture
-from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier
 
 def train_model(train_X, train_Y, valid_X, valid_Y, model, name):
 
@@ -70,8 +65,6 @@ if __name__ == '__main__':
     models.append(('SVM', SVC(random_state=0)))
     models.append(('KNN', KNeighborsClassifier()))
     models.append(('RF', RandomForestClassifier(random_state=0)))
-    # models.append(('GMM', GaussianMixture(n_components=10, random_state=0)))
-    # models.append(('Kmeans', KMeans(n_clusters=10, random_state=0)))
 
     # evaluate each model
     valid_acc = []
@@ -92,4 +85,6 @@ if __name__ == '__main__':
     print('best classifier = ' + str(names[np.argmax(valid_acc)]))
     accuracy = np.sum((valid_Y_hat == valid_Y))/300.0*100.0
     print('final validation accuracy = ' + str(accuracy) + ' %')
+
+
 
