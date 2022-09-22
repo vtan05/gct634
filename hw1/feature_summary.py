@@ -10,6 +10,10 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import silhouette_samples, silhouette_score
 
 data_path = './dataset/'
 features_path = './features/'
@@ -33,17 +37,34 @@ def mean_features(dataset='train'):
         features_file = features_path + file_name
         features = np.load(features_file)
 
+        # check optimal clusters for unsupervised learning models
+        # silhouette = []
+        # for n_clusters in range(2,11):
+        #     clusters = KMeans(n_clusters=n_clusters, random_state=0)
+        #     labels = clusters.fit_predict(features)
+        #     silhouette_avg = silhouette_score(features, labels)
+        #     print("n_clusters =", n_clusters,
+        #         "silhouette_score :",silhouette_avg)
+
+        # K-Means for code summarization
+        # scaler = StandardScaler()
+        # scaled_features = scaler.fit_transform(features)
+        # kmeans = KMeans(n_clusters=10, random_state=0).fit(scaled_features)
+        # kmeans_features = np.zeros(scaled_features.shape)
+        # for i in range(features.shape[0]):
+        #      kmeans_features[i,:] = kmeans.cluster_centers_[kmeans.labels_[i]]
+
+        # pca for dimension reduction
+        # pipeline = Pipeline([('scaling', StandardScaler()), ('pca', PCA(n_components=0.95))])
+        # pca = pipeline.fit_transform(features)
+
         # mean pooling
-        # temp = np.mean(features, axis=1)
-        # features_mat[:,i] = np.mean(features, axis=1)
-        # i = i + 1
+        features_mat[:, i] = np.mean(kmeans_features, axis=1)
 
-        # kmeans for codebook summarization
-        kmeans = KMeans(n_clusters=5, random_state=0).fit(features)
-        for i in range(features.shape[0]):
-            features_mat[i,:] = kmeans.cluster_centers_[kmeans.labels_[i]]
+        # max pooling
+        # features_mat[:,i] = np.max(features, axis=1)
 
-        print(kmeans)
+        i = i + 1
 
     f.close()
 
