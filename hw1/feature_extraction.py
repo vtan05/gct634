@@ -131,7 +131,7 @@ def extract_features(dataset='train'):
         # print(kmeans_features.shape)
 
         # pca for dimension reduction
-        # pipeline = Pipeline([('scaling', StandardScaler()), ('pca', PCA(n_components=2))])
+        # pipeline = Pipeline([('scaling', StandardScaler()), ('pca', PCA(n_components=0.95))])
         # pca = pipeline.fit_transform(features)
         # print(pca.shape)
 
