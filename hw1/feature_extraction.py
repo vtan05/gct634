@@ -9,6 +9,11 @@ import sys
 import os
 import numpy as np
 import librosa
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import silhouette_samples, silhouette_score
 
 data_path = './dataset/'
 features_path = './features/'
@@ -17,7 +22,6 @@ def compute_features(y, sr):
 
     # STFT
     D = np.abs(librosa.stft(y))
-    D_dB = librosa.amplitude_to_db(D, ref=np.max)
 
     # RMS
     rms = librosa.feature.rms(S=D)
@@ -109,6 +113,27 @@ def extract_features(dataset='train'):
 
         # extract features
         features = compute_features(y, sr)
+
+        # check optimal clusters for unsupervised learning models
+        # silhouette = []
+        # for n_clusters in range(2,11):
+        #     clusters = KMeans(n_clusters=n_clusters, random_state=0)
+        #     labels = clusters.fit_predict(features)
+        #     silhouette_avg = silhouette_score(features, labels)
+        #     print("n_clusters =", n_clusters,
+        #         "silhouette_score :",silhouette_avg)
+
+        # K-Means for code summarization
+        # scaler = StandardScaler()
+        # scaled_features = scaler.fit_transform(features)
+        # kmeans = KMeans(n_clusters=2, random_state=0).fit(scaled_features)
+        # kmeans_features = np.column_stack([np.sum((scaled_features - center) ** 2, axis=1) ** 0.5 for center in kmeans.cluster_centers_])
+        # print(kmeans_features.shape)
+
+        # pca for dimension reduction
+        # pipeline = Pipeline([('scaling', StandardScaler()), ('pca', PCA(n_components=2))])
+        # pca = pipeline.fit_transform(features)
+        # print(pca.shape)
 
         if not os.path.exists(os.path.dirname(save_file)):
             os.makedirs(os.path.dirname(save_file))

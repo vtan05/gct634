@@ -19,9 +19,10 @@ from time import time
 
 data_path = './dataset/'
 features_path = './features/'
-DIM = 293
+# DIM = 293 * 2 # for PCA and KMeans
+DIM = 293 # for Mean
 
-def mean_features(dataset='train'):
+def pool_features(dataset='train'):
     
     f = open(data_path + dataset + '_list.txt','r')
 
@@ -38,21 +39,13 @@ def mean_features(dataset='train'):
         file_name = file_name.replace('.wav','.npy')
         features_file = features_path + file_name
         features = np.load(features_file)
-
-        # K-Means for code summarization
-        # scaler = StandardScaler()
-        # scaled_features = scaler.fit_transform(features)
-        # kmeans = KMeans(n_clusters=10, random_state=0).fit(scaled_features)
-        # kmeans_features = np.column_stack([np.sum((features - center) ** 2, axis=1) ** 0.5 for center in kmeans.cluster_centers_])
-        # features_mat[:, i] = np.mean(kmeans_features, axis=1)
-
-        # pca for dimension reduction
-        # pipeline = Pipeline([('scaling', StandardScaler()), ('pca', PCA(n_components=0.95))])
-        # pca = pipeline.fit_transform(features)
-        # features_mat[:, i] = np.mean(pca, axis=1)
+        # print(features.shape)
 
         # mean pooling
         features_mat[:, i] = np.mean(features, axis=1)
+
+        # other pooling
+        # features_mat[:, i] = features.flatten()
 
         i = i + 1
 
@@ -61,8 +54,8 @@ def mean_features(dataset='train'):
     return features_mat
         
 if __name__ == '__main__':
-    train_data = mean_features('train')
-    valid_data = mean_features('valid')
+    train_data = pool_features('train')
+    valid_data = pool_features('valid')
 
     plt.figure(1)
     plt.subplot(2,1,1)

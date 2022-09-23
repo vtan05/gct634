@@ -11,6 +11,9 @@ import numpy as np
 import librosa
 from feature_summary import *
 import random
+import time
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 from sklearn import model_selection
 from sklearn.linear_model import SGDClassifier
@@ -18,14 +21,12 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix
 
 def train_model(train_X, train_Y, valid_X, valid_Y, model, name):
 
     # train
-    if (name == 'Kmeans') or (name == 'GMM'):
-        model.fit(train_X)
-    else:
-        model.fit(train_X, train_Y)
+    model = model.fit(train_X, train_Y)
 
     # validation
     valid_Y_hat = model.predict(valid_X)
@@ -33,15 +34,25 @@ def train_model(train_X, train_Y, valid_X, valid_Y, model, name):
     accuracy = np.sum((valid_Y_hat == valid_Y))/300.0*100.0
     print(name + ': validation accuracy = ' + str(accuracy) + ' %')
 
+    # Plot Confusion Matrix
+    plt.figure()
+    cf_matrix = confusion_matrix(valid_Y, valid_Y_hat)
+    ax = sns.heatmap(cf_matrix, annot=True)
+    ax.set_title(name + ' + Mean Pooling');
+    ax.set_xlabel('Predicted Classes')
+    ax.set_ylabel('Actual Classes');
+    plt.savefig(name + "confusion_matrix_mean.png")
+
     return model, accuracy
 
 if __name__ == '__main__':
 
+    start_time = time.time()
     random.seed(0)
 
     # load data 
-    train_X = mean_features('train')
-    valid_X = mean_features('valid')
+    train_X = pool_features('train')
+    valid_X = pool_features('valid')
 
     # label generation
     cls = np.array([1,2,3,4,5,6,7,8,9,10])
@@ -85,6 +96,7 @@ if __name__ == '__main__':
     print('best classifier = ' + str(names[np.argmax(valid_acc)]))
     accuracy = np.sum((valid_Y_hat == valid_Y))/300.0*100.0
     print('final validation accuracy = ' + str(accuracy) + ' %')
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 
 
