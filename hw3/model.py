@@ -96,14 +96,21 @@ class Transcriber_RNN(nn.Module):
         # Notice: Changing the initialization order may fail the tests.
         self.melspectrogram = LogMelSpectrogram()
 
-        self.frame_lstm = ...
-        self.frame_fc = ...
+        self.frame_lstm = nn.LSTM(input_size=N_MELS, hidden_size=88, bidirectional=True, num_layers=2)
+        self.frame_fc = nn.Linear(88*2, 88)
 
-        self.onset_lstm = ...
-        self.onset_fc = ...
+        self.onset_lstm = nn.LSTM(input_size=N_MELS, hidden_size=88, bidirectional=True, num_layers=2)
+        self.onset_fc = nn.Linear(88*2, 88)
 
     def forward(self, audio):
         # TODO: Question 1
+        mel = self.melspectrogram(audio)
+
+        x, (h_n, c_n) = self.frame_lstm(mel)
+        frame_out = self.frame_fc(x)
+
+        x, (h_n, c_n) = self.onset_lstm(mel)
+        onset_out = self.onset_fc(x)
         return frame_out, onset_out
 
 
@@ -113,16 +120,25 @@ class Transcriber_CRNN(nn.Module):
         # Notice: Changing the initialization order may fail the tests.
         self.melspectrogram = LogMelSpectrogram()
 
-        self.frame_conv_stack = ...
-        self.frame_lstm = ...
-        self.frame_fc = ...
+        self.frame_conv_stack = ConvStack(N_MELS, cnn_unit, fc_unit)
+        self.frame_lstm = nn.LSTM(input_size=fc_unit, hidden_size=88, bidirectional=True, num_layers=2)
+        self.frame_fc = nn.Linear(88*2, 88)
 
-        self.onset_conv_stack = ...
-        self.onset_lstm = ...
-        self.onset_fc = ...
+        self.onset_conv_stack = ConvStack(N_MELS, cnn_unit, fc_unit)
+        self.onset_lstm = nn.LSTM(input_size=fc_unit, hidden_size=88, bidirectional=True, num_layers=2)
+        self.onset_fc = nn.Linear(88*2, 88)
 
     def forward(self, audio):
         # TODO: Question 2
+        mel = self.melspectrogram(audio)
+
+        x = self.frame_conv_stack(mel)
+        x, (h_n, c_n) = self.frame_lstm(x)
+        frame_out = self.frame_fc(x)
+
+        x = self.onset_conv_stack(mel)
+        x, (h_n, c_n) = self.onset_lstm(x)
+        onset_out = self.onset_fc(x)
         return frame_out, onset_out
 
 
