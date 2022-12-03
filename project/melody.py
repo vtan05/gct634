@@ -20,7 +20,7 @@ def extractMelody(filepath):
     print('Save the result in '+ output_dir + filename)
     #np.savetxt(output_dir + '/' + filename + '.txt', estimate)
     save_file = output_dir + filename
-    # print(estimate.T.shape)
+    
     np.save(save_file, estimate.T)
 
 if __name__ == '__main__':
@@ -30,9 +30,7 @@ if __name__ == '__main__':
     #        extractMelody(data_path + file)
 
     estimate = MeExt('aist_music_30/mJB0.wav', model_type='melody', model_path=model_path, GPU=False, mode='std')
-    # print(estimate.shape)
-    # # print(estimate)
-    #
-    # # estimate.T[1][estimate.T[1] == 0] = np.nan
+
+    # estimate.T[1][estimate.T[1] == 0] = np.nan
     plt.plot(estimate.T[1])
     plt.show()

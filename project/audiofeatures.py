@@ -14,31 +14,31 @@ newdata_path = './aist_music_30/'
 out_path = './beat_feat/'
 
 def audioFeatures(file):
-    # # Load File
-    # y, sr = librosa.load(file, sr=16000)
-    #
-    # # STFT
-    # STFT = np.abs(librosa.stft(y))
-    #
-    # # Dynamics/Loudness
-    # rms = librosa.feature.rms(S=STFT) # [1, TIME]
-    # zcr = librosa.feature.zero_crossing_rate(y) # [1, TIME]
-    #
-    # # Frequency Content
-    # spec_centroid = librosa.feature.spectral_centroid(S=STFT, sr=sr) # [1, TIME]
-    # spec_bw = librosa.feature.spectral_bandwidth(S=STFT, sr=sr) # [1, TIME]
-    # spec_flat = librosa.feature.spectral_flatness(S=STFT) # [1, TIME]
-    #
-    # # MFCC + Deltas (n_mfcc = 20)
-    # S = librosa.feature.melspectrogram(S=STFT, sr=sr)
-    # S_dB = librosa.power_to_db(S, ref=np.max)
-    # mfcc = librosa.feature.mfcc(S=S_dB, sr=sr) # [20, TIME]
-    # mfcc_delta = librosa.feature.delta(mfcc) # [20, TIME]
-    # mfcc_delta2 = librosa.feature.delta(mfcc, order=2) # [20, TIME]
+    # Load File
+    y, sr = librosa.load(file, sr=16000)
+
+    # STFT
+    STFT = np.abs(librosa.stft(y))
+
+    # Dynamics/Loudness
+    rms = librosa.feature.rms(S=STFT) # [1, TIME]
+    zcr = librosa.feature.zero_crossing_rate(y) # [1, TIME]
+
+    # Frequency Content
+    spec_centroid = librosa.feature.spectral_centroid(S=STFT, sr=sr) # [1, TIME]
+    spec_bw = librosa.feature.spectral_bandwidth(S=STFT, sr=sr) # [1, TIME]
+    spec_flat = librosa.feature.spectral_flatness(S=STFT) # [1, TIME]
+
+    # MFCC + Deltas (n_mfcc = 20)
+    S = librosa.feature.melspectrogram(S=STFT, sr=sr)
+    S_dB = librosa.power_to_db(S, ref=np.max)
+    mfcc = librosa.feature.mfcc(S=S_dB, sr=sr) # [20, TIME]
+    mfcc_delta = librosa.feature.delta(mfcc) # [20, TIME]
+    mfcc_delta2 = librosa.feature.delta(mfcc, order=2) # [20, TIME]
 
     # Beat
-    estimator = BeatNet(1, mode='online', inference_model='PF', plot=[], thread=False)
-    output = estimator.process(file)
+    # estimator = BeatNet(1, mode='online', inference_model='PF', plot=[], thread=False)
+    # output = estimator.process(file)
 
     # Plot Beat
     # plt.rcParams['figure.figsize'] = (20, 6)
@@ -52,11 +52,11 @@ def audioFeatures(file):
     # plt.show()
 
     # Concatenate Features
-    # features = [rms, zcr,
-    #             spec_centroid, spec_bw, spec_flat,
-    #             mfcc, mfcc_delta, mfcc_delta2]
-    # features_array = np.concatenate(features, axis=0)
-    return output.T
+    features = [rms, zcr,
+                spec_centroid, spec_bw, spec_flat,
+                mfcc, mfcc_delta, mfcc_delta2]
+    features_array = np.concatenate(features, axis=0)
+    return features_array
 
 def extract_feat():
     for file in os.listdir(newdata_path):
@@ -75,8 +75,4 @@ def extract_feat():
         print("Processing: " + file)
 
 if __name__ == '__main__':
-    # feat = np.load(acoustic_path + 'mBR0.npy')
-    # print(feat.shape)
-
-    #audioFeatures('aist_music_30/mWA1.wav')
     extract_feat()
